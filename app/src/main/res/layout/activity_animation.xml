@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_animation"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.eyeballer.eyeballernative.AnimationActivity"
+    >
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="START"
+        android:onClick="animateHorizontal"
+        android:id="@+id/button"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+    />
+
+    <ImageView
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:id="@+id/imageView"
+        android:background="@drawable/ball"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+    />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cnt: "
+        android:id="@+id/textViewCount"
+        android:layout_alignBottom="@+id/button"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="38dp"
+        android:layout_alignTop="@+id/button"
+        android:gravity="center_vertical"
+    />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Time"
+        android:id="@+id/textViewTime"
+        android:gravity="center_vertical"
+        android:layout_alignBottom="@+id/button"
+        android:layout_alignTop="@+id/button"
+        android:layout_toEndOf="@+id/imageView"
+    />
+
+</RelativeLayout>
