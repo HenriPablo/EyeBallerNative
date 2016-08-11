@@ -22,7 +22,7 @@ public class AnimationActivity extends AppCompatActivity {
     ImageView img;
 
     int animationSpeed = 800;
-    int repeatCount = 99;
+    int repeatCount = 99;   /* odd number of repeats will return the ball to its original position */
     int totalTime = 0;
     int animationRunning = 0;
 
@@ -43,8 +43,6 @@ public class AnimationActivity extends AppCompatActivity {
          *
          */
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-
 
         setContentView(R.layout.activity_animation);
         ImageView img = (ImageView) findViewById(R.id.imageView);
@@ -126,42 +124,9 @@ public class AnimationActivity extends AppCompatActivity {
     }
 
 
-
     public void animateHorizontal(View view) {
-        //System.out.println( "view width passed to animate horizontal: " + view.getWidth() );
+
         Button startBtn = (Button) findViewById(R.id.button);
-//        startBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if( animationRunning == false ){}
-//            }
-//        });
-
-        //Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.animate_horizontal);
-        //animation.setRepeatCount( 5 );
-
-        //AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.bouncy);
-        //ArrayList<Animator> animations = set.getChildAnimations();
-
-        //for(  Animator animtor : animations ){
-            //ObjectAnimator anim = (ObjectAnimator) animtor;
-            //if( anim.getPropertyName().compareTo("x") == 0 ){
-             //   anim.setEvaluator( new FloatEvaluator());
-            //}
-        //}
-
-
-
-        //ObjectAnimator animY = ObjectAnimator.ofFloat(myView, "y", 100f);
-        //AnimatorSet animSetXY = new AnimatorSet();
-        //animSetXY.playTogether(animX);
-        //set.setInterpolator( new LinearInterpolator());
-
-        //set.setTarget( img );
-        //set.start();
-
-        /**/
-
 
         switch ( animationRunning ){
             case 0:
@@ -184,35 +149,7 @@ public class AnimationActivity extends AppCompatActivity {
             default:
                 animationRunning = 0;
                 startBtn.setText("Start 2");
-
         }
-
-
-/*
-         if( animX.isRunning())  {
-            startBtn.setText("Resume");
-            animX.pause();
-            //animationRunning = 0;
-        }
-
-        else if ( !animX.isRunning()) {
-            //img.startAnimation(animation);
-             startBtn.setText("Pause");
-             animX.start();
-
-            //animationRunning = 1;
-        }
-
-        else if( animX.isPaused()){
-            startBtn.setText("Resume");
-            animX.resume();
-        }
-
-        else if( animX.isRunning() && animX.isPaused() ){
-            startBtn.setText("resume again");
-            animX.resume();
-        }
-        */
 
     }
 
