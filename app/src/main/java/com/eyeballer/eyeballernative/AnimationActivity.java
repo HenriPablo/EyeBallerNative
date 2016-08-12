@@ -17,6 +17,10 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class AnimationActivity extends AppCompatActivity {
 
     ImageView img;
@@ -83,6 +87,25 @@ public class AnimationActivity extends AppCompatActivity {
 
 
         animX.addListener(new Animator.AnimatorListener() {
+            /*
+            http://stackoverflow.com/questions/19667473/how-to-show-milliseconds-in-dayshoursminseconds
+             */
+            SimpleDateFormat formatter = new SimpleDateFormat("dd:HH:mm:ss", Locale.UK);
+            Date date;
+            private String getFormattedTimeRemaining( long timeInMilliseconds ){
+
+                long seconds = timeInMilliseconds / 1000;
+                long minutes = seconds / 60;
+                //long hours = minutes / 60;
+                //long days = hours / 24;
+
+                long millisecondsRemaining = timeInMilliseconds - ( minutes * 60 + seconds * 1000 );
+                String time =  minutes % 60 + ":" + seconds % 60 + ":" + millisecondsRemaining;
+                return time;
+            }
+
+
+
             @Override
             public void onAnimationStart(Animator animator) {
                 System.out.println("\n\nonAnimationStart called\n\n");
@@ -113,11 +136,15 @@ public class AnimationActivity extends AppCompatActivity {
             @Override
             public void onAnimationRepeat(Animator animator) {
                 totalTime = totalTime - animationSpeed;
-                timeRemaining.setText( "Time: " + totalTime );
+
 
                 System.out.println("\n\nonAnimationRepeat called\n\n");
                 repeatCount = repeatCount - 1;
                 countRemaining.setText( "Cnt: " + repeatCount );
+
+                //date = new Date( totalTime );
+                timeRemaining.setText( "Time: " + getFormattedTimeRemaining( totalTime ) );
+
             }
         });
 
