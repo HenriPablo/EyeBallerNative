@@ -2,6 +2,8 @@ package com.eyeballer.eyeballernative;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -24,18 +27,26 @@ import java.util.Locale;
 public class AnimationActivity extends AppCompatActivity {
 
     ImageView img;
+    ObjectAnimator animX;
 
-    int animationSpeed = 800;
+    int animationSpeed = 700;
     int repeatCount = 99;   /* odd number of repeats will return the ball to its original position */
     int totalTime = 0;
+
     int animationRunning = 0;
+    int sputnikLeftRightFlag = 0; /* alternate between 0 and 1 - play left or right sound */
+    MediaPlayer sputnikLeft;
+    MediaPlayer sputnikRight;
+    int sputnikOn = 0;
+    ImageButton sputnikBtn;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
-    ObjectAnimator animX;
+
+
 
 
     @Override
@@ -75,6 +86,14 @@ public class AnimationActivity extends AppCompatActivity {
 
         totalTime = repeatCount * animationSpeed;
 
+        this.setVolumeControlStream(AudioManager.STREAM_SYSTEM);
+        sputnikLeft = MediaPlayer.create(this, R.raw.sputnik_left);
+        sputnikLeft.setVolume( 5.0f, 5.0f );
+        sputnikRight = MediaPlayer.create(this, R.raw.sputnik_right);
+        sputnikRight.setVolume( 5.0f, 5.0f );
+        sputnikBtn = (ImageButton) findViewById( R.id.sputnikBtn );
+
+
         /* remainig count display */
         final TextView countRemaining = (TextView) findViewById(R.id.textViewCount);
         countRemaining.setText( countRemaining.getText() + " " + repeatCount );
@@ -96,11 +115,44 @@ public class AnimationActivity extends AppCompatActivity {
 
                 long seconds = timeInMilliseconds / 1000;
                 long minutes = seconds / 60;
+
+                //String strMinutes =  "" + minutes % 60;
+                String strMinutes =  "" + (timeInMilliseconds/(1000*60))%60;
+                if( ((timeInMilliseconds/(1000*60))%60) < 10 ){
+                    strMinutes = "0" + strMinutes;
+                }
+
+                //String strSeconds = "" + seconds % 60;
+                String strSeconds = "" + (timeInMilliseconds/1000)%60;
+                if(  ((timeInMilliseconds/1000)%60) < 10 ){
+                    strSeconds = "0" + strSeconds;
+                }
+
+
                 //long hours = minutes / 60;
                 //long days = hours / 24;
 
-                long millisecondsRemaining = timeInMilliseconds - ( minutes * 60 + seconds * 1000 );
-                String time =  minutes % 60 + ":" + seconds % 60 + ":" + millisecondsRemaining;
+                long minToMillsec = minutes * 60;
+                long secToMillsec = seconds * 1000;
+
+
+                //long millisecondsRemaining = timeInMilliseconds - ( minToMillsec + secToMillsec );
+                long millisecondsRemaining = (timeInMilliseconds%1000)/100;
+
+                String strMillisecondsRemaining = "" + millisecondsRemaining;
+
+                if( ("" + millisecondsRemaining).length() < 5 ){
+                    strMillisecondsRemaining = "0" + millisecondsRemaining;
+                } else if(("" + millisecondsRemaining).length() < 4 ){
+                    strMillisecondsRemaining = "00" + millisecondsRemaining;
+                } else if(("" + millisecondsRemaining).length() < 3 ){
+                    strMillisecondsRemaining = "000" + millisecondsRemaining;
+                } else if(("" + millisecondsRemaining).length() < 2 ){
+                    strMillisecondsRemaining = "0000" + millisecondsRemaining;
+                }
+
+
+                String time =  strMinutes + ":" + strSeconds + ":" + strMillisecondsRemaining;
                 return time;
             }
 
@@ -145,6 +197,21 @@ public class AnimationActivity extends AppCompatActivity {
                 //date = new Date( totalTime );
                 timeRemaining.setText( "Time: " + getFormattedTimeRemaining( totalTime ) );
 
+                //try {
+                  //  if (sputnikLeft.isPlaying()) {
+                   //     sputnikLeft.stop();
+                   //     sputnikLeft.release();
+                   //     sputnikLeft = MediaPlayer.create(this, R.raw.sputnik_left);
+                   // }
+                if( sputnikLeftRightFlag == 0 ){
+                    sputnikLeft.start();
+                    sputnikLeftRightFlag = 1;
+                } else if( sputnikLeftRightFlag == 1){
+                    sputnikRight.start();
+                    sputnikLeftRightFlag = 0;
+                }
+                //} catch(Exception e) { e.printStackTrace(); }
+
             }
         });
 
@@ -178,6 +245,18 @@ public class AnimationActivity extends AppCompatActivity {
                 startBtn.setText("Start 2");
         }
 
+    }
+
+    public void sputnikOnOff( View view ){
+
+        if( sputnikOn == 0 ){
+            sputnikBtn.setImageResource(R.drawable.ic_volume_up_black_24dp);
+            sputnikOn = 1;
+        } else if( sputnikOn == 1){
+            sputnikBtn.setImageResource( R.drawable.ic_volume_off_black_24dp);
+            sputnikOn = 0;
+        }
+        System.out.println("sound button clicked");
     }
 
     @Override
