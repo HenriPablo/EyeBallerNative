@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -39,6 +38,7 @@ public class AnimationActivity extends AppCompatActivity {
     MediaPlayer sputnikRight;
     int sputnikOn = 0;
     ImageButton sputnikBtn;
+    ImageButton playPauseBtn;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -60,7 +60,8 @@ public class AnimationActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setContentView(R.layout.activity_animation);
-        ImageView img = (ImageView) findViewById(R.id.imageView);
+        ImageView img = (ImageView) findViewById(R.id.ballView);
+
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -78,6 +79,8 @@ public class AnimationActivity extends AppCompatActivity {
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) img.getLayoutParams();
         //System.out.println( "lp.rightMargin: " + lp.rightMargin );
         System.out.println( "\n\nimg.getWidth(): " + img+ "\n\n");
+
+        playPauseBtn = (ImageButton) findViewById( R.id.playPauseImageBtn);
 
         animX = ObjectAnimator.ofFloat(img, "x", (w - (48) )  );
         animX.setRepeatCount(repeatCount);
@@ -162,7 +165,7 @@ public class AnimationActivity extends AppCompatActivity {
             public void onAnimationStart(Animator animator) {
                 System.out.println("\n\nonAnimationStart called\n\n");
                 //repeatCount = repeatCount - 1;
-                //countRemaining.setText( "Cnt: " + repeatCount );
+
             }
 
             @Override
@@ -170,13 +173,13 @@ public class AnimationActivity extends AppCompatActivity {
                 System.out.println("\n\nonAnimationEnd called\n\n");
                 getWindow().clearFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 System.out.println("\n\n repeat count at end: " + animX.getRepeatCount() + "\n\n");
-                timeRemaining.setText( "Time: " + animX.getDuration() + animX.getRepeatCount() );
+                timeRemaining.setText( Long.toString(animX.getDuration() + animX.getRepeatCount()) );
                 totalTime = 0;
-                countRemaining.setText( "Cnt: " + animX.getRepeatCount() );
+                countRemaining.setText( animX.getRepeatCount() );
                 animationSpeed = (int) animX.getDuration();
                 repeatCount = animX.getRepeatCount();
-                Button startBtn = (Button) findViewById(R.id.button);
-                startBtn.setText("Start");
+                playPauseBtn.setImageResource( R.drawable.ic_play_circle_filled_black_24dp);
+
                 animationRunning = 0;
             }
 
@@ -192,23 +195,19 @@ public class AnimationActivity extends AppCompatActivity {
 
                 System.out.println("\n\nonAnimationRepeat called\n\n");
                 repeatCount = repeatCount - 1;
-                countRemaining.setText( "Cnt: " + repeatCount );
+                countRemaining.setText( Integer.toString( repeatCount ) );
 
                 //date = new Date( totalTime );
-                timeRemaining.setText( "Time: " + getFormattedTimeRemaining( totalTime ) );
+                timeRemaining.setText( getFormattedTimeRemaining( totalTime ) );
 
-                //try {
-                  //  if (sputnikLeft.isPlaying()) {
-                   //     sputnikLeft.stop();
-                   //     sputnikLeft.release();
-                   //     sputnikLeft = MediaPlayer.create(this, R.raw.sputnik_left);
-                   // }
-                if( sputnikLeftRightFlag == 0 ){
-                    sputnikLeft.start();
-                    sputnikLeftRightFlag = 1;
-                } else if( sputnikLeftRightFlag == 1){
-                    sputnikRight.start();
-                    sputnikLeftRightFlag = 0;
+                if( sputnikOn == 1 ) {
+                    if (sputnikLeftRightFlag == 0) {
+                        sputnikLeft.start();
+                        sputnikLeftRightFlag = 1;
+                    } else if (sputnikLeftRightFlag == 1) {
+                        sputnikRight.start();
+                        sputnikLeftRightFlag = 0;
+                    }
                 }
                 //} catch(Exception e) { e.printStackTrace(); }
 
@@ -219,30 +218,27 @@ public class AnimationActivity extends AppCompatActivity {
 
 
     public void animateHorizontal(View view) {
-
-        Button startBtn = (Button) findViewById(R.id.button);
-
         switch ( animationRunning ){
             case 0:
                 animX.start();
-                startBtn.setText("Pause");
+                playPauseBtn.setImageResource( R.drawable.ic_pause_circle_filled_black_24dp);
                 animationRunning = 1;
                 break;
 
             case 1:
-                startBtn.setText("Resume");
+                playPauseBtn.setImageResource( R.drawable.ic_play_circle_filled_black_24dp);
                 animX.pause();
                 animationRunning = 2;
                 break;
             case 2:
-                startBtn.setText("Pause");
+                playPauseBtn.setImageResource( R.drawable.ic_pause_circle_filled_black_24dp);
                 animX.resume();
                 animationRunning = 1;
                 break;
 
             default:
                 animationRunning = 0;
-                startBtn.setText("Start 2");
+                playPauseBtn.setImageResource( R.drawable.ic_play_circle_filled_black_24dp);
         }
 
     }

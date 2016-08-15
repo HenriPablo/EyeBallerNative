@@ -14,62 +14,81 @@
     tools:context="com.eyeballer.eyeballernative.AnimationActivity"
     android:onClick="sputnikOnOff">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="START"
-        android:onClick="animateHorizontal"
-        android:id="@+id/button"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:textColor="@android:color/holo_green_light"
-        android:background="@color/bright_foreground_material_light"
-        android:gravity="center_vertical|center_horizontal" />
 
     <ImageView
         android:layout_width="16dp"
         android:layout_height="16dp"
-        android:id="@+id/imageView"
+        android:id="@+id/ballView"
         android:background="@drawable/ball"
         android:layout_centerVertical="true"
         android:layout_alignParentStart="true"
-    />
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cnt: "
+        android:layout_width="52dp"
+        android:layout_height="36dp"
         android:id="@+id/textViewCount"
-        android:layout_alignBottom="@+id/button"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="38dp"
-        android:layout_alignTop="@+id/button"
         android:gravity="center_vertical"
-        android:textColor="@android:color/holo_green_light" />
+        android:textColor="@android:color/holo_green_light"
+        android:layout_alignTop="@+id/timeIcn"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:textAlignment="center" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:text="Time"
         android:id="@+id/textViewTime"
         android:gravity="center_vertical"
-        android:layout_alignBottom="@+id/button"
-        android:layout_alignTop="@+id/button"
-        android:layout_toEndOf="@+id/imageView"
-        android:textColor="@android:color/holo_green_light" />
+        android:textColor="@android:color/holo_green_light"
+        android:layout_alignTop="@+id/sputnikBtn"
+        android:layout_alignBottom="@+id/sputnikBtn"
+        android:layout_toStartOf="@+id/sputnikBtn"
+        android:textAlignment="center" />
 
     <ImageButton
-        android:layout_width="66dp"
+        android:layout_width="36dp"
         android:layout_height="36dp"
         android:id="@+id/sputnikBtn"
         android:src="@drawable/ic_volume_off_black_24dp"
         android:background="@android:color/transparent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignTop="@+id/button"
-        android:layout_toStartOf="@+id/button"
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
         android:nestedScrollingEnabled="true"
-        android:onClick="sputnikOnOff" />
+        android:onClick="sputnikOnOff"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@+id/playPauseImageBtn"
+        android:layout_marginEnd="19dp" />
+
+    <ImageButton
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:id="@+id/playPauseImageBtn"
+        android:src="@drawable/ic_play_circle_filled_black_24dp"
+        android:background="@android:color/transparent"
+        android:onClick="animateHorizontal"
+        android:layout_alignTop="@+id/sputnikBtn"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/timeIcn"
+        android:src="@drawable/ic_access_time_black_24dp"
+        android:layout_alignTop="@+id/textViewTime"
+        android:layout_alignStart="@+id/ballView"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="10dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/countIcn"
+        android:src="@drawable/ic_repeat_black_24dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="61dp"
+        android:layout_alignTop="@+id/playPauseImageBtn"
+        android:layout_toStartOf="@+id/textViewCount" />
 
 </RelativeLayout>
