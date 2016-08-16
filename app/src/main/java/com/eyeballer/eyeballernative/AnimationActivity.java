@@ -27,6 +27,7 @@ public class AnimationActivity extends AppCompatActivity {
 
     ImageView img;
     ObjectAnimator animX;
+    EyeBallerUtils eyeBallerUtils;
 
     int animationSpeed = 700;
     int repeatCount = 99;   /* odd number of repeats will return the ball to its original position */
@@ -58,6 +59,7 @@ public class AnimationActivity extends AppCompatActivity {
          *
          */
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        eyeBallerUtils = new EyeBallerUtils();
 
         setContentView(R.layout.activity_animation);
         ImageView img = (ImageView) findViewById(R.id.ballView);
@@ -103,69 +105,20 @@ public class AnimationActivity extends AppCompatActivity {
 
         /* remaining time dispaly */
         final TextView timeRemaining = (TextView) findViewById(R.id.textViewTime);
-        timeRemaining.setText( timeRemaining.getText() + " " + totalTime );
+
+        timeRemaining.setText( eyeBallerUtils.getFormattedTimeRemaining( totalTime ) );
 
         /* return ball to original position */
 
 
         animX.addListener(new Animator.AnimatorListener() {
-            /*
-            http://stackoverflow.com/questions/19667473/how-to-show-milliseconds-in-dayshoursminseconds
-             */
-            SimpleDateFormat formatter = new SimpleDateFormat("dd:HH:mm:ss", Locale.UK);
-            Date date;
-            private String getFormattedTimeRemaining( long timeInMilliseconds ){
 
-                long seconds = timeInMilliseconds / 1000;
-                long minutes = seconds / 60;
-
-                //String strMinutes =  "" + minutes % 60;
-                String strMinutes =  "" + (timeInMilliseconds/(1000*60))%60;
-                if( ((timeInMilliseconds/(1000*60))%60) < 10 ){
-                    strMinutes = "0" + strMinutes;
-                }
-
-                //String strSeconds = "" + seconds % 60;
-                String strSeconds = "" + (timeInMilliseconds/1000)%60;
-                if(  ((timeInMilliseconds/1000)%60) < 10 ){
-                    strSeconds = "0" + strSeconds;
-                }
-
-
-                //long hours = minutes / 60;
-                //long days = hours / 24;
-
-                long minToMillsec = minutes * 60;
-                long secToMillsec = seconds * 1000;
-
-
-                //long millisecondsRemaining = timeInMilliseconds - ( minToMillsec + secToMillsec );
-                long millisecondsRemaining = (timeInMilliseconds%1000)/100;
-
-                String strMillisecondsRemaining = "" + millisecondsRemaining;
-
-                if( ("" + millisecondsRemaining).length() < 5 ){
-                    strMillisecondsRemaining = "0" + millisecondsRemaining;
-                } else if(("" + millisecondsRemaining).length() < 4 ){
-                    strMillisecondsRemaining = "00" + millisecondsRemaining;
-                } else if(("" + millisecondsRemaining).length() < 3 ){
-                    strMillisecondsRemaining = "000" + millisecondsRemaining;
-                } else if(("" + millisecondsRemaining).length() < 2 ){
-                    strMillisecondsRemaining = "0000" + millisecondsRemaining;
-                }
-
-
-                String time =  strMinutes + ":" + strSeconds + ":" + strMillisecondsRemaining;
-                return time;
-            }
 
 
 
             @Override
             public void onAnimationStart(Animator animator) {
-                System.out.println("\n\nonAnimationStart called\n\n");
-                //repeatCount = repeatCount - 1;
-
+                //System.out.println("\n\nonAnimationStart called\n\n");
             }
 
             @Override
@@ -198,7 +151,7 @@ public class AnimationActivity extends AppCompatActivity {
                 countRemaining.setText( Integer.toString( repeatCount ) );
 
                 //date = new Date( totalTime );
-                timeRemaining.setText( getFormattedTimeRemaining( totalTime ) );
+                timeRemaining.setText( eyeBallerUtils.getFormattedTimeRemaining( totalTime ) );
 
                 if( sputnikOn == 1 ) {
                     if (sputnikLeftRightFlag == 0) {

@@ -11,8 +11,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="#05004D"
-    tools:context="com.eyeballer.eyeballernative.AnimationActivity"
-    android:onClick="sputnikOnOff">
+    tools:context="com.eyeballer.eyeballernative.AnimationActivity">
 
 
     <ImageView
@@ -38,14 +37,14 @@
 
     <TextView
         android:layout_width="70dp"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         android:id="@+id/textViewTime"
         android:gravity="center_vertical"
         android:textColor="@android:color/holo_green_light"
-        android:layout_alignTop="@+id/sputnikBtn"
-        android:layout_alignBottom="@+id/sputnikBtn"
-        android:layout_toStartOf="@+id/sputnikBtn"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/timeIcn"
+        android:paddingLeft="2dp" />
 
     <ImageButton
         android:layout_width="36dp"
