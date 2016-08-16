@@ -5,37 +5,30 @@ package com.eyeballer.eyeballernative;
  */
 public class EyeBallerUtils {
 
+    private String strMinutes = "";
+    private String strSeconds = "";
+    private String strMillisecondsRemaining = "";
+
+
     public String getFormattedTimeRemaining( long timeInMilliseconds ){
 
-        String strMinutes =  "" + (timeInMilliseconds/(1000*60))%60;
-        if( ((timeInMilliseconds/(1000*60))%60) < 10 ){
+        strMinutes =  Long.toString( (timeInMilliseconds/(1000*60))%60 );
+
+        if( strMinutes.length() < 2){
             strMinutes = "0" + strMinutes;
         }
 
-        String strSeconds = "" + (timeInMilliseconds/1000)%60;
-        if(  ((timeInMilliseconds/1000)%60) < 10 ){
+        strSeconds = Long.toString((timeInMilliseconds/1000)%60);
+        if(  strSeconds.length() < 2 ){
             strSeconds = "0" + strSeconds;
         }
 
-        long millisecondsRemaining = (timeInMilliseconds%1000)/100;
-
-        String strMillisecondsRemaining = "" + millisecondsRemaining;
-
-        /*
-        if( ("" + millisecondsRemaining).length() < 5 ){
-            strMillisecondsRemaining = "0" + millisecondsRemaining;
-        } else if(("" + millisecondsRemaining).length() < 4 ){
-            strMillisecondsRemaining = "00" + millisecondsRemaining;
-        } else if(("" + millisecondsRemaining).length() < 3 ){
-            strMillisecondsRemaining = "000" + millisecondsRemaining;
-        } else
-        */
-        if(("" + millisecondsRemaining).length() < 2 ){
-            strMillisecondsRemaining = "0" + millisecondsRemaining;
+        strMillisecondsRemaining = Long.toString( (timeInMilliseconds%1000)/100 );
+        if(strMillisecondsRemaining.length() < 2 ){
+            strMillisecondsRemaining = "0" + strMillisecondsRemaining;
         }
 
         return  (strMinutes + ":" + strSeconds + ":" + strMillisecondsRemaining);
-
     }
 
 
