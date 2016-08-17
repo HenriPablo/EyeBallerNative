@@ -78,7 +78,9 @@
         android:layout_alignTop="@+id/textViewTime"
         android:layout_alignStart="@+id/ballView"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="10dp" />
+        android:layout_marginLeft="10dp"
+        android:onClick="pickTravelSpeed"
+        android:nestedScrollingEnabled="false" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -88,6 +90,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="61dp"
         android:layout_alignTop="@+id/playPauseImageBtn"
-        android:layout_toStartOf="@+id/textViewCount" />
+        android:layout_toStartOf="@+id/textViewCount"
+        android:onClick="pickRepeatCount" />
 
 </RelativeLayout>
