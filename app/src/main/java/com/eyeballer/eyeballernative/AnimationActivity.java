@@ -2,16 +2,20 @@ package com.eyeballer.eyeballernative;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.content.DialogInterface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -46,8 +50,6 @@ public class AnimationActivity extends AppCompatActivity {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
-
-
 
 
     @Override
@@ -99,6 +101,7 @@ public class AnimationActivity extends AppCompatActivity {
         sputnikBtn = (ImageButton) findViewById( R.id.sputnikBtn );
 
 
+
         /* remainig count display */
         final TextView countRemaining = (TextView) findViewById(R.id.textViewCount);
         countRemaining.setText( countRemaining.getText() + " " + repeatCount );
@@ -110,11 +113,7 @@ public class AnimationActivity extends AppCompatActivity {
 
         /* return ball to original position */
 
-
         animX.addListener(new Animator.AnimatorListener() {
-
-
-
 
             @Override
             public void onAnimationStart(Animator animator) {
@@ -206,6 +205,46 @@ public class AnimationActivity extends AppCompatActivity {
             sputnikOn = 0;
         }
         System.out.println("sound button clicked");
+    }
+
+    public void pickTravelSpeed( View view ){
+
+    }
+
+    public void pickRepeatCount( View view ){
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /* prepare to create prompt dialogs */
+                LayoutInflater li = LayoutInflater.from( getApplicationContext());
+                View pickRepeatCountView = li.inflate( R.layout.layout_repeat_count_dialog, null );
+                AlertDialog.Builder  alertDialogbuilder = new AlertDialog.Builder( getApplicationContext() );
+                alertDialogbuilder.setView( pickRepeatCountView );
+
+                final NumberPicker pickCnt = (NumberPicker) pickRepeatCountView.findViewById( R.id.repeatCountPicker);
+                pickCnt.setMaxValue(500);
+                pickCnt.setMinValue(3);
+                alertDialogbuilder
+                        .setCancelable( false )
+                        .setPositiveButton("OK",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        repeatCount = pickCnt.getValue();
+                                    }
+                                })
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener(){
+                                    public void  onClick( DialogInterface dialog, int id){
+                                        dialog.cancel();
+                                    }
+
+                        });
+                AlertDialog alertDialog = alertDialogbuilder.create();
+                alertDialog.show();
+
+            }
+        });
     }
 
     @Override
