@@ -47,6 +47,7 @@ public class AnimationActivity extends AppCompatActivity {
     ImageButton sputnikBtn;
     ImageButton playPauseBtn;
     TextView countRemaining;
+    TextView timeRemaining;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -110,7 +111,7 @@ public class AnimationActivity extends AppCompatActivity {
         countRemaining.setText( countRemaining.getText() + " " + repeatCount );
 
         /* remaining time dispaly */
-        final TextView timeRemaining = (TextView) findViewById(R.id.textViewTime);
+        timeRemaining = (TextView) findViewById(R.id.textViewTime);
 
         timeRemaining.setText( eyeBallerUtils.getFormattedTimeRemaining( totalTime ) );
 
@@ -211,7 +212,44 @@ public class AnimationActivity extends AppCompatActivity {
     }
 
     public void pickTravelSpeed( View view ){
+        view.setOnClickListener( new View.OnClickListener(){
+            @Override
+            public  void onClick(View view){
+                LayoutInflater li = LayoutInflater.from( AnimationActivity.this );
+                View pickBallTravelSpeedView = li.inflate( R.layout.layout_ball_travel_speed_dialog, null );
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder( AnimationActivity.this);
+                alertDialogBuilder.setView( pickBallTravelSpeedView );
 
+                final NumberPicker pickSpeed = (NumberPicker) pickBallTravelSpeedView.findViewById(R.id.speedPicker);
+
+                pickSpeed.setMinValue( 0 );
+                final String[] values = {"500", "550", "600", "650", "700", "750", "800", "850", "900", "950", "1000"};
+                pickSpeed.setMaxValue( values.length - 1);
+                pickSpeed.setDisplayedValues( values );
+
+                alertDialogBuilder
+                        .setCancelable( true )
+                        .setPositiveButton("OK",
+                                new DialogInterface.OnClickListener(){
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        AnimationActivity.this.animationSpeed = Integer.parseInt( values[ pickSpeed.getValue()] );
+                                        AnimationActivity.this.animX.setDuration( Long.parseLong( values[ pickSpeed.getValue()]));
+                                        AnimationActivity.this.timeRemaining.setText( eyeBallerUtils.getFormattedTimeRemaining( AnimationActivity.this.totalTime ));
+                                    }
+                                })
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener(){
+
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            }
+        });
     }
 
     public void pickRepeatCount( View view ){
@@ -219,7 +257,7 @@ public class AnimationActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 /* prepare to create prompt dialogs */
-                LayoutInflater li = LayoutInflater.from( getApplicationContext());
+                LayoutInflater li = LayoutInflater.from( AnimationActivity.this );
                 View pickRepeatCountView = li.inflate( R.layout.layout_repeat_count_dialog, null );
                 AlertDialog.Builder  alertDialogbuilder = new AlertDialog.Builder( AnimationActivity.this );
                 alertDialogbuilder.setView( pickRepeatCountView );
@@ -230,19 +268,10 @@ public class AnimationActivity extends AppCompatActivity {
                 final String[] values= {"59","69", "79", "89", "99", "109", "119", "129", "139", "149", "159", "169", "179", "189", "199", "209"};
                 pickCnt.setMaxValue( values.length -1 );
                 pickCnt.setDisplayedValues(  values );
-                pickCnt.setWrapSelectorWheel( true );
+                //pickCnt.setWrapSelectorWheel( true );
 
-                /*
-                pickCnt.setOnValueChangedListener( new NumberPicker.OnValueChangeListener(){
-                    @Override
-                    public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-
-                    }
-
-                });
-                */
                 alertDialogbuilder
-                        .setCancelable( false )
+                        .setCancelable( true )
                         .setPositiveButton("OK",
                                 new DialogInterface.OnClickListener() {
                                     @Override
@@ -263,7 +292,6 @@ public class AnimationActivity extends AppCompatActivity {
                         });
                 AlertDialog alertDialog = alertDialogbuilder.create();
                 alertDialog.show();
-
             }
         });
     }
