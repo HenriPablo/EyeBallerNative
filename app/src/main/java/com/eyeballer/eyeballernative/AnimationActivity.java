@@ -1,7 +1,9 @@
 package com.eyeballer.eyeballernative;
 
 import android.animation.Animator;
+import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -44,6 +46,7 @@ public class AnimationActivity extends AppCompatActivity {
     int sputnikOn = 0;
     ImageButton sputnikBtn;
     ImageButton playPauseBtn;
+    TextView countRemaining;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -103,7 +106,7 @@ public class AnimationActivity extends AppCompatActivity {
 
 
         /* remainig count display */
-        final TextView countRemaining = (TextView) findViewById(R.id.textViewCount);
+        countRemaining = (TextView) findViewById(R.id.textViewCount);
         countRemaining.setText( countRemaining.getText() + " " + repeatCount );
 
         /* remaining time dispaly */
@@ -127,7 +130,7 @@ public class AnimationActivity extends AppCompatActivity {
                 System.out.println("\n\n repeat count at end: " + animX.getRepeatCount() + "\n\n");
                 timeRemaining.setText( Long.toString(animX.getDuration() + animX.getRepeatCount()) );
                 totalTime = 0;
-                countRemaining.setText( animX.getRepeatCount() );
+                countRemaining.setText( "" + animX.getRepeatCount() );
                 animationSpeed = (int) animX.getDuration();
                 repeatCount = animX.getRepeatCount();
                 playPauseBtn.setImageResource( R.drawable.ic_play_circle_filled_black_24dp);
@@ -218,19 +221,37 @@ public class AnimationActivity extends AppCompatActivity {
                 /* prepare to create prompt dialogs */
                 LayoutInflater li = LayoutInflater.from( getApplicationContext());
                 View pickRepeatCountView = li.inflate( R.layout.layout_repeat_count_dialog, null );
-                AlertDialog.Builder  alertDialogbuilder = new AlertDialog.Builder( getApplicationContext() );
+                AlertDialog.Builder  alertDialogbuilder = new AlertDialog.Builder( AnimationActivity.this );
                 alertDialogbuilder.setView( pickRepeatCountView );
 
                 final NumberPicker pickCnt = (NumberPicker) pickRepeatCountView.findViewById( R.id.repeatCountPicker);
-                pickCnt.setMaxValue(500);
-                pickCnt.setMinValue(3);
+
+                pickCnt.setMinValue(0);
+                final String[] values= {"59","69", "79", "89", "99", "109", "119", "129", "139", "149", "159", "169", "179", "189", "199", "209"};
+                pickCnt.setMaxValue( values.length -1 );
+                pickCnt.setDisplayedValues(  values );
+                pickCnt.setWrapSelectorWheel( true );
+
+                /*
+                pickCnt.setOnValueChangedListener( new NumberPicker.OnValueChangeListener(){
+                    @Override
+                    public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+
+                    }
+
+                });
+                */
                 alertDialogbuilder
                         .setCancelable( false )
                         .setPositiveButton("OK",
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                        repeatCount = pickCnt.getValue();
+                                        AnimationActivity.this.repeatCount = Integer.parseInt( values[ pickCnt.getValue() ] );
+                                        AnimationActivity.this.animX.setRepeatCount( Integer.parseInt( values[ pickCnt.getValue()]) );
+                                        System.out.println("repeat picker clicked : " + values[  pickCnt.getValue()] );
+                                        AnimationActivity.this.countRemaining.setText( values[ pickCnt.getValue()] );
+
                                     }
                                 })
                         .setNegativeButton("Cancel",
