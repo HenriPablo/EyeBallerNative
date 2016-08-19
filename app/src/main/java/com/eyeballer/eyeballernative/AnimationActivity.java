@@ -78,14 +78,11 @@ public class AnimationActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics( metrics );
         float w = metrics.widthPixels;
         float h = metrics.heightPixels;
-        //System.out.println( "w in metrics: " + w  + "H in metrics: "  + h );
 
         RelativeLayout rLayout = (RelativeLayout) findViewById( R.id.layout_animation);
         float p = rLayout.getPaddingRight();
-        //System.out.println( "right padding p: " + p );
 
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) img.getLayoutParams();
-        //System.out.println( "lp.rightMargin: " + lp.rightMargin );
         System.out.println( "\n\nimg.getWidth(): " + img+ "\n\n");
 
         playPauseBtn = (ImageButton) findViewById( R.id.playPauseImageBtn);
@@ -137,11 +134,26 @@ public class AnimationActivity extends AppCompatActivity {
                 playPauseBtn.setImageResource( R.drawable.ic_play_circle_filled_black_24dp);
 
                 animationRunning = 0;
+
+
             }
 
             @Override
             public void onAnimationCancel(Animator animator) {
                 System.out.println("\n\nonAnimationCancel called\n\n");
+                                /* end sounds */
+                if (sputnikRight != null && sputnikRight.isPlaying())
+                {
+                    sputnikRight.stop();
+                    sputnikRight.release();
+                    sputnikRight = null;
+                }
+                if (sputnikLeft != null && sputnikLeft.isPlaying())
+                {
+                    sputnikLeft.stop();
+                    sputnikLeft.release();
+                    sputnikLeft = null;
+                }
             }
 
             @Override
@@ -153,8 +165,8 @@ public class AnimationActivity extends AppCompatActivity {
                 repeatCount = repeatCount - 1;
                 countRemaining.setText( Integer.toString( repeatCount ) );
 
-                //date = new Date( totalTime );
                 timeRemaining.setText( eyeBallerUtils.getFormattedTimeRemaining( totalTime ) );
+
 
                 if( sputnikOn == 1 ) {
                     if (sputnikLeftRightFlag == 0) {
@@ -165,7 +177,6 @@ public class AnimationActivity extends AppCompatActivity {
                         sputnikLeftRightFlag = 0;
                     }
                 }
-                //} catch(Exception e) { e.printStackTrace(); }
 
             }
         });
