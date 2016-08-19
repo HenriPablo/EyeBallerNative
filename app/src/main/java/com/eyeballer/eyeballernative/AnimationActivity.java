@@ -77,13 +77,6 @@ public class AnimationActivity extends AppCompatActivity {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics( metrics );
         float w = metrics.widthPixels;
-        float h = metrics.heightPixels;
-
-        RelativeLayout rLayout = (RelativeLayout) findViewById( R.id.layout_animation);
-        float p = rLayout.getPaddingRight();
-
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) img.getLayoutParams();
-        System.out.println( "\n\nimg.getWidth(): " + img+ "\n\n");
 
         playPauseBtn = (ImageButton) findViewById( R.id.playPauseImageBtn);
 
@@ -101,9 +94,7 @@ public class AnimationActivity extends AppCompatActivity {
         sputnikRight.setVolume( 5.0f, 5.0f );
         sputnikBtn = (ImageButton) findViewById( R.id.sputnikBtn );
 
-
-
-        /* remainig count display */
+        /* remaining count display */
         countRemaining = (TextView) findViewById(R.id.textViewCount);
         countRemaining.setText( countRemaining.getText() + " " + repeatCount );
 
@@ -125,34 +116,29 @@ public class AnimationActivity extends AppCompatActivity {
             public void onAnimationEnd(Animator animator) {
                 System.out.println("\n\nonAnimationEnd called\n\n");
                 getWindow().clearFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                System.out.println("\n\n repeat count at end: " + animX.getRepeatCount() + "\n\n");
                 timeRemaining.setText( Long.toString(animX.getDuration() + animX.getRepeatCount()) );
                 totalTime = 0;
                 countRemaining.setText( "" + animX.getRepeatCount() );
                 animationSpeed = (int) animX.getDuration();
                 repeatCount = animX.getRepeatCount();
                 playPauseBtn.setImageResource( R.drawable.ic_play_circle_filled_black_24dp);
-
                 animationRunning = 0;
-
-
             }
 
             @Override
             public void onAnimationCancel(Animator animator) {
-                System.out.println("\n\nonAnimationCancel called\n\n");
-                                /* end sounds */
-                if (sputnikRight != null && sputnikRight.isPlaying())
+                /* end sounds */
+                if (AnimationActivity.this.sputnikRight != null && AnimationActivity.this.sputnikRight.isPlaying())
                 {
-                    sputnikRight.stop();
-                    sputnikRight.release();
-                    sputnikRight = null;
+                    AnimationActivity.this.sputnikRight.stop();
+                    AnimationActivity.this.sputnikRight.release();
+                    AnimationActivity.this.sputnikRight = null;
                 }
-                if (sputnikLeft != null && sputnikLeft.isPlaying())
+                if (AnimationActivity.this.sputnikLeft != null && AnimationActivity.this.sputnikLeft.isPlaying())
                 {
-                    sputnikLeft.stop();
-                    sputnikLeft.release();
-                    sputnikLeft = null;
+                    AnimationActivity.this.sputnikLeft.stop();
+                    AnimationActivity.this.sputnikLeft.release();
+                    AnimationActivity.this.sputnikLeft = null;
                 }
             }
 
@@ -160,27 +146,22 @@ public class AnimationActivity extends AppCompatActivity {
             public void onAnimationRepeat(Animator animator) {
                 totalTime = totalTime - animationSpeed;
 
-
-                System.out.println("\n\nonAnimationRepeat called\n\n");
                 repeatCount = repeatCount - 1;
                 countRemaining.setText( Integer.toString( repeatCount ) );
 
                 timeRemaining.setText( eyeBallerUtils.getFormattedTimeRemaining( totalTime ) );
 
-
                 if( sputnikOn == 1 ) {
                     if (sputnikLeftRightFlag == 0) {
-                        sputnikLeft.start();
+                        AnimationActivity.this.sputnikLeft.start();
                         sputnikLeftRightFlag = 1;
                     } else if (sputnikLeftRightFlag == 1) {
-                        sputnikRight.start();
+                        AnimationActivity.this.sputnikRight.start();
                         sputnikLeftRightFlag = 0;
                     }
                 }
-
             }
         });
-
     }
 
 
@@ -279,7 +260,6 @@ public class AnimationActivity extends AppCompatActivity {
                 final String[] values= {"59","69", "79", "89", "99", "109", "119", "129", "139", "149", "159", "169", "179", "189", "199", "209"};
                 pickCnt.setMaxValue( values.length -1 );
                 pickCnt.setDisplayedValues(  values );
-                //pickCnt.setWrapSelectorWheel( true );
 
                 alertDialogbuilder
                         .setCancelable( true )
