@@ -5,6 +5,7 @@ import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -20,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -33,6 +35,8 @@ public class AnimationActivity extends AppCompatActivity {
 
     ImageView img;
     ObjectAnimator animX;
+    boolean animClickPaused = false;
+
     EyeBallerUtils eyeBallerUtils;
 
     int animationSpeed = 700;
@@ -44,6 +48,7 @@ public class AnimationActivity extends AppCompatActivity {
     MediaPlayer sputnikLeft;
     MediaPlayer sputnikRight;
     int sputnikOn = 0;
+
     ImageButton sputnikBtn;
     ImageButton playPauseBtn;
     TextView countRemaining;
@@ -74,12 +79,11 @@ public class AnimationActivity extends AppCompatActivity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
+        playPauseBtn = (ImageButton) findViewById( R.id.playPauseImageBtn);
+
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics( metrics );
         float w = metrics.widthPixels;
-
-        playPauseBtn = (ImageButton) findViewById( R.id.playPauseImageBtn);
-
         animX = ObjectAnimator.ofFloat(img, "x", (w - (48) )  );
         animX.setRepeatCount(repeatCount);
         animX.setRepeatMode( 2 );
@@ -127,19 +131,7 @@ public class AnimationActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationCancel(Animator animator) {
-                /* end sounds */
-                if (AnimationActivity.this.sputnikRight != null && AnimationActivity.this.sputnikRight.isPlaying())
-                {
-                    AnimationActivity.this.sputnikRight.stop();
-                    AnimationActivity.this.sputnikRight.release();
-                    AnimationActivity.this.sputnikRight = null;
-                }
-                if (AnimationActivity.this.sputnikLeft != null && AnimationActivity.this.sputnikLeft.isPlaying())
-                {
-                    AnimationActivity.this.sputnikLeft.stop();
-                    AnimationActivity.this.sputnikLeft.release();
-                    AnimationActivity.this.sputnikLeft = null;
-                }
+
             }
 
             @Override
@@ -164,6 +156,50 @@ public class AnimationActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
+        {
+            System.out.println("ORIENTATION_LANDSCAPE: called");
+            //Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics( metrics );
+            float w = metrics.widthPixels;
+            //animX.pause();
+            animX = ObjectAnimator.ofFloat(img, "x", (w - (48) )  );
+            //animX.resume();
+            System.out.println("w in metric on LANDSCAPE: orientationchange: " + w );
+        }
+        else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT)
+        {
+            //Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics( metrics );
+            float w = metrics.widthPixels;
+            //animX.pause();
+            animX = ObjectAnimator.ofFloat(img, "x", (w - (48) )  );
+            //animX.resume();
+            System.out.println("w in metric on PORTRAIT orientationchange: " + w );
+            System.out.println("ORIENTATION_PORTRAIT: called");
+        }
+
+        /* end sounds */
+        if (AnimationActivity.this.sputnikRight != null && AnimationActivity.this.sputnikRight.isPlaying())
+        {
+            AnimationActivity.this.sputnikRight.stop();
+            AnimationActivity.this.sputnikRight.release();
+            AnimationActivity.this.sputnikRight = null;
+        }
+        if (AnimationActivity.this.sputnikLeft != null && AnimationActivity.this.sputnikLeft.isPlaying())
+        {
+            AnimationActivity.this.sputnikLeft.stop();
+            AnimationActivity.this.sputnikLeft.release();
+            AnimationActivity.this.sputnikLeft = null;
+        }
+    }
 
     public void animateHorizontal(View view) {
         switch ( animationRunning ){
