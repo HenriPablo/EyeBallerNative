@@ -36,6 +36,7 @@ public class AnimationActivity extends AppCompatActivity {
     ImageView img;
     ObjectAnimator animX;
     boolean animClickPaused = false;
+    boolean animXRunning = false;
 
     EyeBallerUtils eyeBallerUtils;
 
@@ -48,6 +49,7 @@ public class AnimationActivity extends AppCompatActivity {
     MediaPlayer sputnikLeft;
     MediaPlayer sputnikRight;
     int sputnikOn = 0;
+    boolean sputnikClickPaused = false;
 
     ImageButton sputnikBtn;
     ImageButton playPauseBtn;
@@ -64,6 +66,7 @@ public class AnimationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         /*
          * Has to be BEFORE setContentView
          * http://stackoverflow.com/questions/12204336/getwindow-addflagswindowmanager-layoutparams-flag-keep-screen-on-no-response
@@ -81,6 +84,17 @@ public class AnimationActivity extends AppCompatActivity {
 
         playPauseBtn = (ImageButton) findViewById( R.id.playPauseImageBtn);
 
+        /* restore animation related data after screen rotation */
+        if( savedInstanceState != null){
+            animClickPaused = savedInstanceState.getBoolean( "animClickPaused", animClickPaused );
+            sputnikClickPaused = savedInstanceState.getBoolean( "sputnikClickPaused", sputnikClickPaused );
+            animXRunning = savedInstanceState.getBoolean( "animXRunning", animXRunning );
+            totalTime = savedInstanceState.getInt( "totalTime", totalTime );
+            repeatCount = savedInstanceState.getInt( "repeatCount", repeatCount );
+            animationSpeed = savedInstanceState.getInt( "animationSpeed", animationSpeed );
+        }
+
+
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics( metrics );
         float w = metrics.widthPixels;
@@ -91,11 +105,17 @@ public class AnimationActivity extends AppCompatActivity {
 
         totalTime = repeatCount * animationSpeed;
 
+        if( animXRunning ){
+            playPauseBtn.setImageResource( R.drawable.ic_pause_circle_filled_black_24dp);
+            animationRunning = 1;
+            animX.start();
+        }
+
         this.setVolumeControlStream(AudioManager.STREAM_SYSTEM);
         sputnikLeft = MediaPlayer.create(this, R.raw.sputnik_left);
-        sputnikLeft.setVolume( 5.0f, 5.0f );
+        //sputnikLeft.setVolume( 5.0f, 5.0f );
         sputnikRight = MediaPlayer.create(this, R.raw.sputnik_right);
-        sputnikRight.setVolume( 5.0f, 5.0f );
+        //sputnikRight.setVolume( 5.0f, 5.0f );
         sputnikBtn = (ImageButton) findViewById( R.id.sputnikBtn );
 
         /* remaining count display */
@@ -127,6 +147,7 @@ public class AnimationActivity extends AppCompatActivity {
                 repeatCount = animX.getRepeatCount();
                 playPauseBtn.setImageResource( R.drawable.ic_play_circle_filled_black_24dp);
                 animationRunning = 0;
+                sputnikClickPaused = false;
             }
 
             @Override
@@ -144,18 +165,38 @@ public class AnimationActivity extends AppCompatActivity {
                 timeRemaining.setText( eyeBallerUtils.getFormattedTimeRemaining( totalTime ) );
 
                 if( sputnikOn == 1 ) {
-                    if (sputnikLeftRightFlag == 0) {
-                        AnimationActivity.this.sputnikLeft.start();
+                    if (sputnikLeftRightFlag == 0 && sputnikLeft != null) {
+                        sputnikLeft.start();
                         sputnikLeftRightFlag = 1;
-                    } else if (sputnikLeftRightFlag == 1) {
-                        AnimationActivity.this.sputnikRight.start();
+                    } else if (sputnikLeftRightFlag == 1 && sputnikRight != null) {
+                        sputnikRight.start();
+                        sputnikLeftRightFlag = 0;
+                    } else if( sputnikLeftRightFlag == 0 && sputnikLeft == null){
+                        sputnikLeft = MediaPlayer.create(AnimationActivity.this, R.raw.sputnik_left);
+                        sputnikLeft.start();
+                        sputnikLeftRightFlag = 1;
+                    } else if( sputnikLeftRightFlag == 1 && sputnikRight == null){
+                        sputnikRight = MediaPlayer.create(AnimationActivity.this, R.raw.sputnik_right);
+                        sputnikRight.start();
                         sputnikLeftRightFlag = 0;
                     }
+
+
                 }
             }
         });
     }
+    @Override
+    public void onSaveInstanceState( Bundle savedInstanceState ){
+        savedInstanceState.putBoolean( "animClickPaused", animClickPaused );
+        savedInstanceState.putBoolean( "sputnikClickPaused", sputnikClickPaused);
+        savedInstanceState.putBoolean( "animXRunning", animX.isRunning() );
+        savedInstanceState.putInt( "totalTime", totalTime );
+        savedInstanceState.putInt( "repeatCount", repeatCount );
+        savedInstanceState.putInt( "animationSpeed", animationSpeed );
+    }
 
+    /**
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -186,7 +227,8 @@ public class AnimationActivity extends AppCompatActivity {
             System.out.println("ORIENTATION_PORTRAIT: called");
         }
 
-        /* end sounds */
+
+
         if (AnimationActivity.this.sputnikRight != null && AnimationActivity.this.sputnikRight.isPlaying())
         {
             AnimationActivity.this.sputnikRight.stop();
@@ -200,22 +242,53 @@ public class AnimationActivity extends AppCompatActivity {
             AnimationActivity.this.sputnikLeft = null;
         }
     }
+    */
 
     public void animateHorizontal(View view) {
         switch ( animationRunning ){
+
+            /* 1st time start */
             case 0:
                 animX.start();
                 playPauseBtn.setImageResource( R.drawable.ic_pause_circle_filled_black_24dp);
                 animationRunning = 1;
                 break;
 
+            /* animation started and running - this will pause it*/
             case 1:
                 playPauseBtn.setImageResource( R.drawable.ic_play_circle_filled_black_24dp);
+
+                sputnikClickPaused = true;
+
+                if( sputnikRight != null) {
+                    sputnikRight.stop();
+                    sputnikRight.release();
+                    sputnikRight = null;
+                }
+
+                if( sputnikLeft != null ) {
+                    sputnikLeft.stop();
+                    sputnikLeft.release();
+                    sputnikLeft = null;
+                }
                 animX.pause();
                 animationRunning = 2;
                 break;
+
+            /* animation paused - this will restart it */
             case 2:
                 playPauseBtn.setImageResource( R.drawable.ic_pause_circle_filled_black_24dp);
+
+                if(sputnikClickPaused && sputnikOn == 1 && sputnikRight == null)
+                {
+                    sputnikLeft = MediaPlayer.create(this, R.raw.sputnik_left);
+                    sputnikClickPaused = false;
+                }
+                if(sputnikClickPaused && sputnikOn == 1 && sputnikLeft == null){
+                    sputnikRight = MediaPlayer.create(this, R.raw.sputnik_right);
+                    sputnikClickPaused = false;
+                }
+
                 animX.resume();
                 animationRunning = 1;
                 break;
@@ -231,7 +304,16 @@ public class AnimationActivity extends AppCompatActivity {
 
         if( sputnikOn == 0 ){
             sputnikBtn.setImageResource(R.drawable.ic_volume_up_black_24dp);
+
+            if( sputnikLeft == null){
+                //sputnikLeft = MediaPlayer.create(this, R.raw.sputnik_left);
+            }
+            if( sputnikRight == null){
+                //sputnikRight = MediaPlayer.create(this, R.raw.sputnik_right);
+            }
+
             sputnikOn = 1;
+
         } else if( sputnikOn == 1){
             sputnikBtn.setImageResource( R.drawable.ic_volume_off_black_24dp);
             sputnikOn = 0;

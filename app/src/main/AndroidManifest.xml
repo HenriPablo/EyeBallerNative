@@ -10,7 +10,6 @@
         android:theme="@style/Theme.AppCompat">
         <activity
             android:name=".AnimationActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
