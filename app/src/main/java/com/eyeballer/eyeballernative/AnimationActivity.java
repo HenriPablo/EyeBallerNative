@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -82,10 +83,11 @@ public class AnimationActivity extends AppCompatActivity {
         eyeBallerUtils = new EyeBallerUtils();
 
         /* preferences */
+        Resources res = getResources();
         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         editor = sharedPref.edit();
-        animationSpeed  = sharedPref.getInt("prefSpeed", 700);
-        repeatCount     = sharedPref.getInt("prefCount", 101);
+        animationSpeed  = sharedPref.getInt("prefSpeed", res.getInteger( R.integer.animation_speed ));
+        repeatCount     = sharedPref.getInt("prefCount", res.getInteger( R.integer.repeat_count ));
 
         setContentView(R.layout.activity_animation);
         ImageView img = (ImageView) findViewById(R.id.ballView);
@@ -125,9 +127,7 @@ public class AnimationActivity extends AppCompatActivity {
 
         this.setVolumeControlStream(AudioManager.STREAM_SYSTEM);
         sputnikLeft = MediaPlayer.create(this, R.raw.sputnik_left);
-        //sputnikLeft.setVolume( 5.0f, 5.0f );
         sputnikRight = MediaPlayer.create(this, R.raw.sputnik_right);
-        //sputnikRight.setVolume( 5.0f, 5.0f );
         sputnikBtn = (ImageButton) findViewById( R.id.sputnikBtn );
 
         /* remaining count display */
@@ -155,8 +155,8 @@ public class AnimationActivity extends AppCompatActivity {
                 timeRemaining.setText( Long.toString(animX.getDuration() + animX.getRepeatCount()) );
                 totalTime = 0;
                 countRemaining.setText( "" + animX.getRepeatCount() );
-                animationSpeed = (int) animX.getDuration();
-                repeatCount = animX.getRepeatCount();
+                animationSpeed  = sharedPref.getInt("prefSpeed", AnimationActivity.this.getResources().getInteger(R.integer.animation_speed));
+                repeatCount     = sharedPref.getInt("prefCount", AnimationActivity.this.getResources().getInteger(R.integer.repeat_count));
                 playPauseBtn.setImageResource( R.drawable.ic_play_circle_filled_black_24dp);
                 animationRunning = 0;
                 sputnikClickPaused = false;
@@ -207,54 +207,6 @@ public class AnimationActivity extends AppCompatActivity {
         savedInstanceState.putInt( "repeatCount", repeatCount );
         savedInstanceState.putInt( "animationSpeed", animationSpeed );
     }
-
-    /**
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        // Checks the orientation of the screen
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
-        {
-            System.out.println("ORIENTATION_LANDSCAPE: called");
-            //Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
-            DisplayMetrics metrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics( metrics );
-            float w = metrics.widthPixels;
-            //animX.pause();
-            animX = ObjectAnimator.ofFloat(img, "x", (w - (48) )  );
-            //animX.resume();
-            System.out.println("w in metric on LANDSCAPE: orientationchange: " + w );
-        }
-        else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT)
-        {
-            //Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
-            DisplayMetrics metrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics( metrics );
-            float w = metrics.widthPixels;
-            //animX.pause();
-            animX = ObjectAnimator.ofFloat(img, "x", (w - (48) )  );
-            //animX.resume();
-            System.out.println("w in metric on PORTRAIT orientationchange: " + w );
-            System.out.println("ORIENTATION_PORTRAIT: called");
-        }
-
-
-
-        if (AnimationActivity.this.sputnikRight != null && AnimationActivity.this.sputnikRight.isPlaying())
-        {
-            AnimationActivity.this.sputnikRight.stop();
-            AnimationActivity.this.sputnikRight.release();
-            AnimationActivity.this.sputnikRight = null;
-        }
-        if (AnimationActivity.this.sputnikLeft != null && AnimationActivity.this.sputnikLeft.isPlaying())
-        {
-            AnimationActivity.this.sputnikLeft.stop();
-            AnimationActivity.this.sputnikLeft.release();
-            AnimationActivity.this.sputnikLeft = null;
-        }
-    }
-    */
 
     public void animateHorizontal(View view) {
         switch ( animationRunning ){

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:title="Ball Speed"
+        android:key="ball_speed"
+        android:defaultValue="800"
+        android:summary="Time with which ball travels from side to side of screen. The shorter the time, the faster the travel"
+        />
+</PreferenceScreen>
