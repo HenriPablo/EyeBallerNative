@@ -4,7 +4,9 @@ import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -56,6 +58,10 @@ public class AnimationActivity extends AppCompatActivity {
     TextView countRemaining;
     TextView timeRemaining;
 
+    /* preferences */
+    SharedPreferences sharedPref;
+    SharedPreferences.Editor editor;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -74,6 +80,12 @@ public class AnimationActivity extends AppCompatActivity {
          */
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         eyeBallerUtils = new EyeBallerUtils();
+
+        /* preferences */
+        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
+        animationSpeed  = sharedPref.getInt("prefSpeed", 700);
+        repeatCount     = sharedPref.getInt("prefCount", 101);
 
         setContentView(R.layout.activity_animation);
         ImageView img = (ImageView) findViewById(R.id.ballView);
@@ -346,6 +358,9 @@ public class AnimationActivity extends AppCompatActivity {
                                         AnimationActivity.this.animationSpeed = Integer.parseInt( values[ pickSpeed.getValue()] );
                                         AnimationActivity.this.animX.setDuration( Long.parseLong( values[ pickSpeed.getValue()]));
                                         AnimationActivity.this.timeRemaining.setText( eyeBallerUtils.getFormattedTimeRemaining( AnimationActivity.this.totalTime ));
+
+                                        editor.putInt("prefSpeed", Integer.parseInt( values[ pickSpeed.getValue()] ));
+                                        editor.commit();
                                     }
                                 })
                         .setNegativeButton("Cancel",
@@ -389,6 +404,9 @@ public class AnimationActivity extends AppCompatActivity {
                                         AnimationActivity.this.animX.setRepeatCount( Integer.parseInt( values[ pickCnt.getValue()]) );
                                         System.out.println("repeat picker clicked : " + values[  pickCnt.getValue()] );
                                         AnimationActivity.this.countRemaining.setText( values[ pickCnt.getValue()] );
+
+                                        editor.putInt("prefCount",  Integer.parseInt( values[ pickCnt.getValue()]));
+                                        editor.commit();
 
                                     }
                                 })
