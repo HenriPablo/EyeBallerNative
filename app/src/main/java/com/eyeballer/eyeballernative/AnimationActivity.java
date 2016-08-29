@@ -97,9 +97,13 @@ public class AnimationActivity extends AppCompatActivity {
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
         playPauseBtn = (ImageButton) findViewById( R.id.playPauseImageBtn);
-
-        /* restore animation related data after screen rotation */
+        sputnikBtn = (ImageButton) findViewById( R.id.sputnikBtn );
+        /* restore animation, sound and UI related data after screen rotation */
         if( savedInstanceState != null){
+            sputnikOn = savedInstanceState.getInt("sputnikOn", sputnikOn);
+            if( sputnikOn == 1){
+                sputnikBtn.setImageResource( R.drawable.ic_volume_up_black_24dp);
+            }
             animClickPaused = savedInstanceState.getBoolean( "animClickPaused", animClickPaused );
             sputnikClickPaused = savedInstanceState.getBoolean( "sputnikClickPaused", sputnikClickPaused );
             animXRunning = savedInstanceState.getBoolean( "animXRunning", animXRunning );
@@ -128,7 +132,7 @@ public class AnimationActivity extends AppCompatActivity {
         this.setVolumeControlStream(AudioManager.STREAM_SYSTEM);
         sputnikLeft = MediaPlayer.create(this, R.raw.sputnik_left);
         sputnikRight = MediaPlayer.create(this, R.raw.sputnik_right);
-        sputnikBtn = (ImageButton) findViewById( R.id.sputnikBtn );
+
 
         /* remaining count display */
         countRemaining = (TextView) findViewById(R.id.textViewCount);
@@ -200,6 +204,7 @@ public class AnimationActivity extends AppCompatActivity {
     }
     @Override
     public void onSaveInstanceState( Bundle savedInstanceState ){
+        savedInstanceState.putInt("sputnikOn", sputnikOn );
         savedInstanceState.putBoolean( "animClickPaused", animClickPaused );
         savedInstanceState.putBoolean( "sputnikClickPaused", sputnikClickPaused);
         savedInstanceState.putBoolean( "animXRunning", animX.isRunning() );
