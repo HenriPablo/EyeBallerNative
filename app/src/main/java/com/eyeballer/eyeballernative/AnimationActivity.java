@@ -205,12 +205,25 @@ public class AnimationActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState( Bundle savedInstanceState ){
         savedInstanceState.putInt("sputnikOn", sputnikOn );
-        savedInstanceState.putBoolean( "animClickPaused", animClickPaused );
         savedInstanceState.putBoolean( "sputnikClickPaused", sputnikClickPaused);
+        if( sputnikRight != null) {
+            sputnikRight.stop();
+            sputnikRight.release();
+            sputnikRight = null;
+        }
+
+        if( sputnikLeft != null ) {
+            sputnikLeft.stop();
+            sputnikLeft.release();
+            sputnikLeft = null;
+        }
+
+        savedInstanceState.putBoolean( "animClickPaused", animClickPaused );
         savedInstanceState.putBoolean( "animXRunning", animX.isRunning() );
         savedInstanceState.putInt( "totalTime", totalTime );
         savedInstanceState.putInt( "repeatCount", repeatCount );
         savedInstanceState.putInt( "animationSpeed", animationSpeed );
+        animX.pause();
     }
 
     public void animateHorizontal(View view) {
