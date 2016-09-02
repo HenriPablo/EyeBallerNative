@@ -107,6 +107,9 @@ public class AnimationActivity extends AppCompatActivity {
             animClickPaused = savedInstanceState.getBoolean( "animClickPaused", animClickPaused );
             sputnikClickPaused = savedInstanceState.getBoolean( "sputnikClickPaused", sputnikClickPaused );
             animXRunning = savedInstanceState.getBoolean( "animXRunning", animXRunning );
+            if( !animXRunning || animClickPaused){
+                animationRunning = 0;
+            }
             totalTime = savedInstanceState.getInt( "totalTime", totalTime );
             repeatCount = savedInstanceState.getInt( "repeatCount", repeatCount );
             animationSpeed = savedInstanceState.getInt( "animationSpeed", animationSpeed );
