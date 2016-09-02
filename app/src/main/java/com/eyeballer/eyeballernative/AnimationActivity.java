@@ -156,11 +156,17 @@ public class AnimationActivity extends AppCompatActivity {
             public void onAnimationEnd(Animator animator) {
                 System.out.println("\n\nonAnimationEnd called\n\n");
                 getWindow().clearFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                timeRemaining.setText( Long.toString(animX.getDuration() + animX.getRepeatCount()) );
-                totalTime = 0;
-                countRemaining.setText( "" + animX.getRepeatCount() );
+
                 animationSpeed  = sharedPref.getInt("prefSpeed", AnimationActivity.this.getResources().getInteger(R.integer.animation_speed));
                 repeatCount     = sharedPref.getInt("prefCount", AnimationActivity.this.getResources().getInteger(R.integer.repeat_count));
+
+                totalTime =  animationSpeed * repeatCount;
+
+                timeRemaining.setText(  eyeBallerUtils.getFormattedTimeRemaining( totalTime ) );
+
+
+                countRemaining.setText( "" + repeatCount );
+
                 playPauseBtn.setImageResource( R.drawable.ic_play_circle_filled_black_24dp);
                 animationRunning = 0;
                 sputnikClickPaused = false;
