@@ -106,9 +106,17 @@ public class AnimationActivity extends AppCompatActivity {
             }
             animClickPaused = savedInstanceState.getBoolean( "animClickPaused", animClickPaused );
             sputnikClickPaused = savedInstanceState.getBoolean( "sputnikClickPaused", sputnikClickPaused );
+            animationRunning = savedInstanceState.getInt( "animationRunning", animationRunning );
             animXRunning = savedInstanceState.getBoolean( "animXRunning", animXRunning );
-            if( !animXRunning || animClickPaused){
-                animationRunning = 0;
+
+            //System.out.println("savedInstanceState -> animXRunning: " + animXRunning );
+            System.out.println("savedInstanceState -> animClickPaused: " + animClickPaused);
+            if( animClickPaused){
+                animationRunning = 1;
+                if( animX != null){
+                    animX.pause();
+                }
+                System.out.println( "animation should be paused in savedInstanceState");
             }
             totalTime = savedInstanceState.getInt( "totalTime", totalTime );
             repeatCount = savedInstanceState.getInt( "repeatCount", repeatCount );
@@ -131,6 +139,13 @@ public class AnimationActivity extends AppCompatActivity {
             animationRunning = 1;
             animX.start();
         }
+        if( animClickPaused ){
+            animX.pause();
+            animationRunning = 2;
+            //TODO: set play-pause icon to play arrow
+            playPauseBtn.setImageResource( R.drawable.ic_play_circle_filled_black_24dp);
+
+        }
 
         this.setVolumeControlStream(AudioManager.STREAM_SYSTEM);
         sputnikLeft = MediaPlayer.create(this, R.raw.sputnik_left);
@@ -152,7 +167,7 @@ public class AnimationActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationStart(Animator animator) {
-                //System.out.println("\n\nonAnimationStart called\n\n");
+                System.out.println("\n\nonAnimationStart called\n\n");
             }
 
             @Override
@@ -228,6 +243,7 @@ public class AnimationActivity extends AppCompatActivity {
         }
 
         savedInstanceState.putBoolean( "animClickPaused", animClickPaused );
+        savedInstanceState.putInt("animationRunning",animationRunning );
         savedInstanceState.putBoolean( "animXRunning", animX.isRunning() );
         savedInstanceState.putInt( "totalTime", totalTime );
         savedInstanceState.putInt( "repeatCount", repeatCount );
@@ -236,13 +252,15 @@ public class AnimationActivity extends AppCompatActivity {
     }
 
     public void animateHorizontal(View view) {
+        System.out.println( "animationRunning in animateHorizontal: " + animationRunning );
         switch ( animationRunning ){
-
             /* 1st time start */
             case 0:
                 animX.start();
                 playPauseBtn.setImageResource( R.drawable.ic_pause_circle_filled_black_24dp);
                 animationRunning = 1;
+                animClickPaused = false;
+                animXRunning = true;
                 break;
 
             /* animation started and running - this will pause it*/
@@ -250,6 +268,9 @@ public class AnimationActivity extends AppCompatActivity {
                 playPauseBtn.setImageResource( R.drawable.ic_play_circle_filled_black_24dp);
 
                 sputnikClickPaused = true;
+                animClickPaused = true;
+                animXRunning = false;
+
 
                 if( sputnikRight != null) {
                     sputnikRight.stop();
@@ -264,6 +285,8 @@ public class AnimationActivity extends AppCompatActivity {
                 }
                 animX.pause();
                 animationRunning = 2;
+                animXRunning = false;
+                animClickPaused = true;
                 break;
 
             /* animation paused - this will restart it */
@@ -282,6 +305,7 @@ public class AnimationActivity extends AppCompatActivity {
 
                 animX.resume();
                 animationRunning = 1;
+                animClickPaused = false;
                 break;
 
             default:
